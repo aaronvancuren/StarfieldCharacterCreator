@@ -33,7 +33,7 @@ public class Rank
         return statEffects;
     }
 
-    public Set<String> getStatsEffected(int i)
+    public Set<String> getStatsEffected()
     {
         return statEffects.keySet();
     }

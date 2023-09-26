@@ -4,6 +4,7 @@ import Main.Rank;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class RankTest
 {
@@ -12,6 +13,28 @@ public class RankTest
         // TODO: Will test with data from Excel file.
         Rank rank = CreateRank();
         ShowRankDetails(rank);
+
+        // Incremental Increase
+        IncreaseChallengeProgress(rank, 0);
+        System.out.println("Challenge progress: " + rank.getChallengeProgress());
+
+        // Jump Increase
+        IncreaseChallengeProgress(rank, 3);
+        System.out.println("Challenge progress: " + rank.getChallengeProgress());
+
+        // Complete Challenge
+        IncreaseChallengeProgress(rank, 2);
+        System.out.println("Challenge progress: " + rank.getChallengeProgress());
+        if (rank.isNextRankAvailable())
+        {
+            System.out.println("Challenge completed.");
+        }
+        else
+        {
+            System.out.println("Failed to increase challenge progress.");
+        }
+
+        ShowStatsEffected(rank);
     }
 
     public static Rank CreateRank()
@@ -101,16 +124,50 @@ public class RankTest
         }
     }
 
-    public static void Template()
+    public static void IncreaseChallengeProgress(Rank rank, int progressAmount)
     {
         try
         {
-
+            int currentChallengeProgress = rank.getChallengeProgress();
+            if (progressAmount > 0)
+            {
+                rank.increaseChallengeProgress(progressAmount);
+                if (rank.getChallengeProgress() != currentChallengeProgress + progressAmount)
+                {
+                    throw new Exception("Failed to increase the challenge progress by " + progressAmount);
+                }
+            }
+            else
+            {
+                rank.increaseChallengeProgress();
+                if (rank.getChallengeProgress() != currentChallengeProgress + 1)
+                {
+                    throw new Exception("Failed to add incremental increase to challenge progress.");
+                }
+            }
         }
         catch (Exception e)
         {
-
+            System.out.println("Failed to increase challenge progress. Error:" + e.getMessage());
+            System.exit(e.hashCode());
         }
     }
 
+    public static void ShowStatsEffected(Rank rank)
+    {
+        try
+        {
+            Set<String> statsEffected = rank.getStatsEffected();
+            for (String statEffect : statsEffected)
+            {
+                double statEffectValue = rank.getStatEffectValue(statEffect);
+                System.out.println("The " + statEffect + " is modified by " + statEffectValue + "%");
+            }
+        }
+        catch (Exception e)
+        {
+            System.out.println("Failed to show stats effected and their respective values. Error:" + e.getMessage());
+            System.exit(e.hashCode());
+        }
+    }
 }
