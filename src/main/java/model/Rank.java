@@ -1,26 +1,34 @@
 package model;
 
-import java.util.Map;
-import java.util.Set;
+import java.sql.Connection;
+import java.util.LinkedList;
 
 public class Rank
 {
+    private static final Connection connection = MariaProvider.getConnection();
+    private final int rankId;
     private final int rank;
-    private final Map<String, Double> statEffects;
-    private final Map<String, String> statEffectDescriptions;
+    private final LinkedList<Stat> stats;
     private final String challengeDescription;
     private int challengeProgress = 0;
     private final int challengeGoal;
     private boolean nextRankAvailable = false;
 
-    public Rank(int rank, Map<String, Double> statEffects, Map<String, String> statEffectDescriptions,
-                String challengeDescription, int challengeGoal)
+    public Rank(int rankId, int rank, LinkedList<Stat> stats, String challengeDescription, int challengeProgress,
+                int challengeGoal, boolean nextRankAvailable)
     {
+        this.rankId = rankId;
         this.rank = rank;
-        this.statEffects = statEffects;
-        this.statEffectDescriptions = statEffectDescriptions;
+        this.stats = stats;
         this.challengeDescription = challengeDescription;
+        this.challengeProgress = challengeProgress;
         this.challengeGoal = challengeGoal;
+        this.nextRankAvailable = nextRankAvailable;
+    }
+
+    public int getRankId()
+    {
+        return rankId;
     }
 
     public int getRank()
@@ -28,24 +36,39 @@ public class Rank
         return rank;
     }
 
-    public Map<String, Double> getStatEffects()
+    public LinkedList<Stat> getStatEffects()
     {
-        return statEffects;
+        return stats;
     }
 
-    public Set<String> getStatsEffected()
+    public String getStatName(int index)
     {
-        return statEffects.keySet();
+        return stats.get(index).getName();
     }
 
-    public double getStatEffectValue(String statEffect)
+    public String getStatName(Stat stat)
     {
-        return statEffects.get(statEffect);
+        return stats.get(stats.indexOf(stat)).getName();
     }
 
-    public String getStatEffectDescription(String statEffect)
+    public double getStatEffect(int index)
     {
-        return statEffectDescriptions.get(statEffect);
+        return stats.get(index).getEffect();
+    }
+
+    public double getStatEffect(Stat stat)
+    {
+        return stats.get(stats.indexOf(stat)).getEffect();
+    }
+
+    public String getStatDescription(int index)
+    {
+        return stats.get(index).getDescription();
+    }
+
+    public String getStatDescription(Stat stat)
+    {
+        return stats.get(stats.indexOf(stat)).getDescription();
     }
 
     public String getChallengeDescription()
@@ -58,11 +81,6 @@ public class Rank
         return challengeProgress;
     }
 
-    public int getChallengeGoal()
-    {
-        return challengeGoal;
-    }
-
     public void increaseChallengeProgress()
     {
         challengeProgress++;
@@ -73,6 +91,11 @@ public class Rank
     {
         challengeProgress += progressAmount;
         nextRankAvailable = challengeProgress > challengeGoal;
+    }
+
+    public int getChallengeGoal()
+    {
+        return challengeGoal;
     }
 
     public boolean isNextRankAvailable()

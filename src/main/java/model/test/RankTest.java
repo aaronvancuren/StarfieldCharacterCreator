@@ -1,10 +1,9 @@
 package model.test;
 
 import model.Rank;
+import model.Stat;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.LinkedList;
 
 public class RankTest
 {
@@ -41,23 +40,23 @@ public class RankTest
     {
         try
         {
-            Map<String, Double> statEffects = new HashMap<String, Double>();
-            statEffects.put("Astrodynamics", 15.0);
+            LinkedList<Stat> statEffects = new LinkedList<>();
+            Stat astrodynamicsStat = new Stat("Astrodynamics", 15, "Increases grav jump range.");
+            statEffects.add(1, astrodynamicsStat);
 
-            Map<String, String> statEffectDescriptions = new HashMap<String, String>();
-            statEffectDescriptions.put("Astrodynamics", "Increases ship fuel.");
-
-            Rank rank = new Rank(1, statEffects, statEffectDescriptions, "Make 5 grav jumps.", 5);
+            Rank rank = new Rank(1, 1, statEffects, "Make 5 grav jumps.", 0, 5, false);
             if (rank.getRank() != 1)
             {
                 throw new Exception("Failed to save rank.");
             }
 
-            if (rank.getStatEffects().size() > 0)
+            LinkedList<Stat> rankStatEffects = rank.getStatEffects();
+            if (!rankStatEffects.isEmpty())
             {
-                if (rank.getStatEffects().containsKey("Astrodynamics"))
+                if (rankStatEffects.contains(astrodynamicsStat))
                 {
-                    if (rank.getStatEffects().get("Astrodynamics") != 15.0)
+                    astrodynamicsStat = rankStatEffects.get(rankStatEffects.indexOf(astrodynamicsStat));
+                    if (astrodynamicsStat.getEffect() != 15)
                     {
                         throw new Exception("Failed to add correct stat effect value.");
                     }
@@ -72,7 +71,7 @@ public class RankTest
                 throw new Exception("Failed to add stat effects.");
             }
 
-            if (!rank.getStatEffectDescription("Astrodynamics").equals("Increases ship fuel."))
+            if (!astrodynamicsStat.getDescription().equals("Increases grav jump range."))
             {
                 throw new Exception("Failed to save stat effect description for Astrodynamics.");
             }
@@ -82,14 +81,14 @@ public class RankTest
                 throw new Exception("Failed to save challenge description.");
             }
 
-            if (rank.getChallengeGoal() != 5)
-            {
-                throw new Exception("Failed to save challenge goal.");
-            }
-
             if (rank.getChallengeProgress() != 0)
             {
                 throw new Exception("Failed to set challenge progress.");
+            }
+
+            if (rank.getChallengeGoal() != 5)
+            {
+                throw new Exception("Failed to save challenge goal.");
             }
         }
         catch (Exception e)
@@ -106,10 +105,10 @@ public class RankTest
         try
         {
             System.out.println("Current rank: " + rank.getRank());
-            for (Map.Entry<String, Double> statEffect : rank.getStatEffects().entrySet())
+            for (Stat statEffect : rank.getStatEffects())
             {
-                System.out.println("The " + statEffect.getKey() + " is modified by " + statEffect.getValue() + "%");
-                System.out.println("Description: " + rank.getStatEffectDescription(statEffect.getKey()));
+                System.out.println("The " + statEffect.getName() + " is modified by " + statEffect.getEffect() + "%");
+                System.out.println("Description: " + statEffect.getDescription());
             }
 
             System.out.println("Challenge: " + rank.getChallengeDescription());
@@ -157,11 +156,10 @@ public class RankTest
     {
         try
         {
-            Set<String> statsEffected = rank.getStatsEffected();
-            for (String statEffect : statsEffected)
+            LinkedList<Stat> statsEffected = rank.getStatEffects();
+            for (Stat statEffect : statsEffected)
             {
-                double statEffectValue = rank.getStatEffectValue(statEffect);
-                System.out.println("The " + statEffect + " is modified by " + statEffectValue + "%");
+                System.out.println("The " + statEffect.getName() + " is modified by " + statEffect.getEffect() + "%");
             }
         }
         catch (Exception e)

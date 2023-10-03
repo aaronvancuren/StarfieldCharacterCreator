@@ -1,9 +1,8 @@
 package model.test;
 
-import model.Skill;
+import javafx.beans.property.SimpleListProperty;
 import model.StarfieldCharacter;
-
-import java.util.LinkedList;
+import model.Stat;
 
 public class StarfieldCharacterTest
 {
@@ -36,7 +35,8 @@ public class StarfieldCharacterTest
         try
         {
             StarfieldCharacter character = new StarfieldCharacter("John", "I'm a space cowboy",
-                                                                  new LinkedList<Skill>());
+                                                                  new SimpleListProperty<>(),
+                                                                  new SimpleListProperty<Stat>());
             if (!character.getName().equals("John"))
             {
                 throw new Exception("Failed to save characters name");

@@ -1,53 +1,107 @@
 package model;
 
+import javafx.beans.property.*;
+import javafx.collections.ObservableList;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 public class StarfieldCharacter
 {
-    private String name;
-    private String description;
-    private final LinkedList<Skill> skills;
-    private Map<String, Double> stats;
-    private int level = 1;
-    private int experience = 0;
-    private int experienceNeeded = 1000;
-    private int availableSkillPoints = 3;
+    private static final Connection connection = MariaProvider.getConnection();
+    private IntegerProperty characterId;
+    private StringProperty name;
+    private StringProperty description;
+    private final SimpleListProperty<Skill> skills;
+    private SimpleListProperty<Stat> stats;
+    private IntegerProperty level;
+    private IntegerProperty experience;
+    private IntegerProperty experienceNeeded;
+    private IntegerProperty availableSkillPoints;
 
-
-    public StarfieldCharacter(String name, String description, LinkedList<Skill> skills)
+    public StarfieldCharacter(String name, String description, ObservableList<Skill> skills, ObservableList<Stat> stats)
     {
-        this.name = name;
-        this.description = description;
+        this.name = new SimpleStringProperty(name);
+        this.description = new SimpleStringProperty(description);
         setStats();
-        this.skills = skills;
+        this.skills = new SimpleListProperty<>(skills);
         updateStats(skills);
     }
 
+    public StarfieldCharacter(int characterId, String name, String description, ObservableList<Skill> skills,
+                              ObservableList<Stat> stats, int level, int experience, int experienceNeeded,
+                              int availableSkillPoints)
+    {
+        this.characterId = new SimpleIntegerProperty(characterId);
+        this.name = new SimpleStringProperty(name);
+        this.description = new SimpleStringProperty(description);
+        this.skills = new SimpleListProperty<>(skills);
+        this.stats = new SimpleListProperty<>(stats);
+        this.level = new SimpleIntegerProperty(level);
+        this.experience = new SimpleIntegerProperty(experience);
+        this.experienceNeeded = new SimpleIntegerProperty(experienceNeeded);
+        this.availableSkillPoints = new SimpleIntegerProperty(availableSkillPoints);
+    }
+
+    public StarfieldCharacter(StarfieldCharacter character)
+    {
+        this.characterId = new SimpleIntegerProperty(character.getCharacterId());
+        this.name = new SimpleStringProperty(character.getName());
+        this.description = new SimpleStringProperty(character.getDescription());
+        this.skills = new SimpleListProperty<>(character.getSkills());
+        this.stats = new SimpleListProperty<>(character.getStats());
+        this.level = new SimpleIntegerProperty(character.getLevel());
+        this.experience = new SimpleIntegerProperty(getExperience());
+        this.experienceNeeded = new SimpleIntegerProperty(character.getExperienceNeeded());
+        this.availableSkillPoints = new SimpleIntegerProperty(character.getAvailableSkillPoints());
+    }
+
+    public int getCharacterId()
+    {
+        return characterId.get();
+    }
+
     public String getName()
+    {
+        return name.get();
+    }
+
+    public StringProperty getNameProperty()
     {
         return name;
     }
 
     public void setName(String name)
     {
-        this.name = name;
+        this.name = new SimpleStringProperty(name);
     }
 
-    public String getDescription()
+    public StringProperty getDescriptionProperty()
     {
         return description;
     }
 
-    public void setDescription(String description)
+    public String getDescription()
     {
-        this.description = description;
+        return description.get();
     }
 
-    public List<Skill> getSkills()
+    public void setDescription(String description)
+    {
+        this.description = new SimpleStringProperty(description);
+    }
+
+    public SimpleListProperty<Skill> getSkillsProperty()
     {
         return skills;
+    }
+
+    public ObservableList<Skill> getSkills()
+    {
+        return skills.get();
     }
 
     public Skill getSkill(Skill skill)
@@ -57,7 +111,7 @@ public class StarfieldCharacter
 
     public void addSkill(Skill skill) throws Exception
     {
-        if (availableSkillPoints > 0)
+        if (availableSkillPoints.get() > 0)
         {
             int skillIndex = skills.indexOf(skill);
             if (skillIndex == -1)   // Character does not currently have the skill.
@@ -70,7 +124,7 @@ public class StarfieldCharacter
             }
 
             updateStat(skill);
-            availableSkillPoints--;
+            availableSkillPoints.set(availableSkillPoints.get() - 1);
         }
         else
         {
@@ -78,9 +132,55 @@ public class StarfieldCharacter
         }
     }
 
-    public Map<String, Double> getStats()
+
+    public SimpleListProperty<Stat> getStatsProperty()
     {
         return stats;
+    }
+
+    public ObservableList<Stat> getStats()
+    {
+        return stats.get();
+    }
+
+    public String getStatName(int index)
+    {
+        return stats.get().get(index).getName();
+    }
+
+    public String getStatName(Stat stat)
+    {
+        return stats.get().get(stats.indexOf(stat)).getName();
+    }
+
+    public double getStatEffect(int index)
+    {
+        return stats.get().get(index).getEffect();
+    }
+
+    public double getStatEffect(Stat stat)
+    {
+        return stats.get().get(stats.indexOf(stat)).getEffect();
+    }
+
+    public void setStatEffect(int index, int effect)
+    {
+        stats.get().get(index).setEffect(effect);
+    }
+
+    public void setStatEffect(Stat stat, int effect)
+    {
+        stats.get().get(stats.indexOf(stat)).setEffect(effect);
+    }
+
+    public String getStatDescription(int index)
+    {
+        return stats.get().get(index).getDescription();
+    }
+
+    public String getStatDescription(Stat stat)
+    {
+        return stats.get().get(stats.indexOf(stat)).getDescription();
     }
 
     private void setStats()
@@ -90,16 +190,14 @@ public class StarfieldCharacter
 
     private void updateStat(Skill skill)
     {
-        Rank rank = skill.getCurrentRank();
-        Map<String, Double> statEffects = rank.getStatEffects();
-        for (Map.Entry<String, Double> statEffect : statEffects.entrySet())
+        LinkedList<Stat> statEffects = skill.getRank().getStatEffects();
+        for (Stat statEffect : statEffects)
         {
-            Double oldValue = stats.get(statEffect.getKey());
-            stats.replace(statEffect.getKey(), oldValue, oldValue * (1 + statEffect.getValue()));
+            setStatEffect(statEffect, statEffect.getEffect());
         }
     }
 
-    private void updateStats(LinkedList<Skill> skills)
+    private void updateStats(ObservableList<Skill> skills)
     {
         for (Skill skill : skills)
         {
@@ -107,24 +205,29 @@ public class StarfieldCharacter
         }
     }
 
-    public Double getStatValue(String statKey)
-    {
-        return stats.get(statKey);
-    }
-
-    public int getLevel()
+    public IntegerProperty getLevelProperty()
     {
         return level;
     }
 
-    public int getExperience()
+    public int getLevel()
+    {
+        return level.get();
+    }
+
+    public IntegerProperty getExperienceProperty()
     {
         return experience;
     }
 
+    public int getExperience()
+    {
+        return experience.get();
+    }
+
     public void addExperience(int experienceEarned)
     {
-        experience += experienceEarned;
+        experience.set(experience.get() + experienceEarned);
         if (shouldLevelUp())
         {
             levelUp();
@@ -133,31 +236,160 @@ public class StarfieldCharacter
 
     private boolean shouldLevelUp()
     {
-        return experience > experienceNeeded;
+        return experience.get() > experienceNeeded.get();
     }
 
-    public int getExperienceNeeded()
+    public IntegerProperty getExperienceNeededProperty()
     {
         return experienceNeeded;
     }
 
-    private void setExperienceNeeded()
+    public int getExperienceNeeded()
     {
-        experienceNeeded *= 1 + (1 - Math.exp(-0.05 * level)) * 0.5;
+        return experienceNeeded.get();
     }
 
-    public int getAvailableSkillPoints()
+    private void setExperienceNeeded()
+    {
+        experienceNeeded.set((int) (experienceNeeded.get() * (1 + ((1 - Math.exp(-0.05 * level.get())) * 0.5))));
+    }
+
+    public IntegerProperty getAvailableSkillPointsProperty()
     {
         return availableSkillPoints;
     }
 
+    public int getAvailableSkillPoints()
+    {
+        return availableSkillPoints.get();
+    }
+
     private void levelUp()
     {
-        level++;
-        int experienceExcess = experience - experienceNeeded;
-        experience = 0; // Resets experience
+        level.set(level.get() + 1);
+        int experienceExcess = experience.get() - experienceNeeded.get();
+        experience.set(0); // Resets experience
         setExperienceNeeded(); // Sets experience needed for the new level
-        availableSkillPoints++;
+        availableSkillPoints.set(availableSkillPoints.get() + 1);
         addExperience(experienceExcess); // Captures potential multiple level ups given the experience obtained.
+    }
+
+    public static StarfieldCharacter createCharacter(StarfieldCharacter character)
+    {
+        try
+        {
+            PreparedStatement ps = connection.prepareStatement(QueryBuilder.createCharacterQuery());
+            ps.setString(1, character.getName());
+            ps.setInt(2, character.getExperienceNeeded());
+            ps.setInt(3, character.getAvailableSkillPoints());
+            ps.setString(4, character.getDescription());
+            ps.setInt(5, character.getLevel());
+            ps.setInt(6, character.getExperience());
+            ps.execute();
+
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Failed to retrieve character. Error: " + new RuntimeException(e).getMessage());
+        }
+        catch (Exception e)
+        {
+            System.out.println("Failed to create character. Error: " + e.getMessage());
+        }
+
+        return new StarfieldCharacter(character);
+    }
+
+    public static LinkedList<StarfieldCharacter> viewAllCharacter()
+    {
+        LinkedList<StarfieldCharacter> characters = new LinkedList<>();
+        try
+        {
+            PreparedStatement ps = connection.prepareStatement(QueryBuilder.viewAllCharactersQuery());
+            ResultSet result = ps.executeQuery();
+            while (result.next())
+            {
+                characters.add(
+                        new StarfieldCharacter(result.getInt(1), result.getString(2), result.getString(5), null, null,
+                                               result.getInt(6), result.getInt(7), result.getInt(3), result.getInt(4)));
+            }
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Failed to retrieve character. Error: " + new RuntimeException(e).getMessage());
+        }
+        catch (Exception e)
+        {
+            System.out.println("Failed to retrieve all characters. Error: " + e.getMessage());
+        }
+
+        return characters;
+    }
+
+    public static StarfieldCharacter viewCharacter(int characterId)
+    {
+        try
+        {
+            PreparedStatement ps = connection.prepareStatement(QueryBuilder.viewCharacterQuery());
+            ps.setInt(1, characterId);
+
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Failed to retrieve character. Error: " + new RuntimeException(e).getMessage());
+        }
+        catch (Exception e)
+        {
+            System.out.println("Failed to retrieve character. Error: " + e.getMessage());
+        }
+
+        return null;
+    }
+
+    public static StarfieldCharacter updateCharacter(StarfieldCharacter character)
+    {
+        try
+        {
+            PreparedStatement ps = connection.prepareStatement(QueryBuilder.updateCharacterQuery());
+            ps.setString(1, character.getName());
+            ps.setInt(2, character.getExperienceNeeded());
+            ps.setInt(3, character.getAvailableSkillPoints());
+            ps.setString(4, character.getDescription());
+            ps.setInt(5, character.getLevel());
+            ps.setInt(6, character.getExperience());
+            ps.setInt(7, character.getCharacterId());
+            ps.executeUpdate();
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Failed to retrieve character. Error: " + new RuntimeException(e).getMessage());
+        }
+        catch (Exception e)
+        {
+            System.out.println("Failed to update character. Error: " + e.getMessage());
+        }
+
+        return null;
+    }
+
+    public static boolean deleteCharacter(int characterId)
+    {
+        try
+        {
+            PreparedStatement ps = connection.prepareStatement(QueryBuilder.deleteCharacterQuery());
+            ps.setInt(1, characterId);
+            ps.execute();
+            return true;
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Failed to retrieve character. Error: " + new RuntimeException(e).getMessage());
+        }
+        catch (Exception e)
+        {
+            System.out.println("Failed to delete character. Error: " + e.getMessage());
+        }
+
+        return false;
     }
 }

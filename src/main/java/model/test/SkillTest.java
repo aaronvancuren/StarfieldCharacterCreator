@@ -16,7 +16,7 @@ public class SkillTest
     {
         try
         {
-            Skill skill = new Skill("Astrodynamics", Skill.Category.Science, Skill.Tier.Novice, new Rank[]{});
+            Skill skill = new Skill(1, "Astrodynamics", Skill.Category.Science, Skill.Tier.Novice, new Rank[]{});
             if (!skill.getName().equals("Astrodynamics"))
             {
                 throw new Exception("Failed to save skill name.");
