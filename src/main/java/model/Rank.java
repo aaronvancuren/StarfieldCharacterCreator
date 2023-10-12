@@ -1,25 +1,37 @@
 package model;
 
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
+
 import java.sql.Connection;
-import java.util.LinkedList;
 
 public class Rank
 {
     private static final Connection connection = MariaProvider.getConnection();
     private final int rankId;
     private final int rank;
-    private final LinkedList<Stat> stats;
+    private final Stat stat;
     private final String challengeDescription;
     private int challengeProgress = 0;
     private final int challengeGoal;
     private boolean nextRankAvailable = false;
 
-    public Rank(int rankId, int rank, LinkedList<Stat> stats, String challengeDescription, int challengeProgress,
+    public Rank(int rankId, int rank, Stat stat, String challengeDescription, int challengeGoal)
+    {
+        this.rankId = rankId;
+        this.rank = rank;
+        this.stat = stat;
+        this.challengeDescription = challengeDescription;
+        this.challengeGoal = challengeGoal;
+    }
+
+    public Rank(int rankId, int rank, Stat stat, String challengeDescription, int challengeProgress,
                 int challengeGoal, boolean nextRankAvailable)
     {
         this.rankId = rankId;
         this.rank = rank;
-        this.stats = stats;
+        this.stat = stat;
         this.challengeDescription = challengeDescription;
         this.challengeProgress = challengeProgress;
         this.challengeGoal = challengeGoal;
@@ -36,39 +48,21 @@ public class Rank
         return rank;
     }
 
-    public LinkedList<Stat> getStatEffects()
+    public Stat getStat() {return stat;}
+
+    public String getStatName()
     {
-        return stats;
+        return stat.getName();
     }
 
-    public String getStatName(int index)
+    public int getStatEffect()
     {
-        return stats.get(index).getName();
+        return stat.getEffect();
     }
 
-    public String getStatName(Stat stat)
+    public String getStatDescription()
     {
-        return stats.get(stats.indexOf(stat)).getName();
-    }
-
-    public double getStatEffect(int index)
-    {
-        return stats.get(index).getEffect();
-    }
-
-    public double getStatEffect(Stat stat)
-    {
-        return stats.get(stats.indexOf(stat)).getEffect();
-    }
-
-    public String getStatDescription(int index)
-    {
-        return stats.get(index).getDescription();
-    }
-
-    public String getStatDescription(Stat stat)
-    {
-        return stats.get(stats.indexOf(stat)).getDescription();
+        return stat.getDescription();
     }
 
     public String getChallengeDescription()
@@ -101,5 +95,21 @@ public class Rank
     public boolean isNextRankAvailable()
     {
         return nextRankAvailable;
+    }
+
+    public TableView<Rank> getTableView()
+    {
+        TableView<Rank> tableView = new TableView<>();
+        TableColumn<Rank, String> rank = new TableColumn<>("Rank");
+        rank.setCellValueFactory(new PropertyValueFactory<>("rank"));
+        TableColumn<Rank, String> challengeDescription = new TableColumn<>("Challenge Description");
+        challengeDescription.setCellValueFactory(new PropertyValueFactory<>("challengeDescription"));
+        TableColumn<Rank, Boolean> nextRankAvailable = new TableColumn<>("Next Rank Available");
+        nextRankAvailable.setCellValueFactory(new PropertyValueFactory<>("nextRankAvailable"));
+        tableView.getColumns().add(rank);
+        tableView.getColumns().add(challengeDescription);
+        tableView.getColumns().add(nextRankAvailable);
+        tableView.getItems().addAll(this);
+        return tableView;
     }
 }
