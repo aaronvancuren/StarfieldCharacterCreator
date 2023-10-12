@@ -3,8 +3,6 @@ package model.test;
 import model.Rank;
 import model.Stat;
 
-import java.util.LinkedList;
-
 public class RankTest
 {
     public static void main(String[] args)
@@ -40,22 +38,20 @@ public class RankTest
     {
         try
         {
-            LinkedList<Stat> statEffects = new LinkedList<>();
             Stat astrodynamicsStat = new Stat("Astrodynamics", 15, "Increases grav jump range.");
-            statEffects.add(1, astrodynamicsStat);
 
-            Rank rank = new Rank(1, 1, statEffects, "Make 5 grav jumps.", 0, 5, false);
+            Rank rank = new Rank(1, 1, new Stat("Astrodynamics", 15, "Increases grav jump range."),
+                                 "Make 5 grav jumps.", 5);
             if (rank.getRank() != 1)
             {
                 throw new Exception("Failed to save rank.");
             }
 
-            LinkedList<Stat> rankStatEffects = rank.getStatEffects();
-            if (!rankStatEffects.isEmpty())
+            Stat rankStat = rank.getStat();
+            if (rankStat != null)
             {
-                if (rankStatEffects.contains(astrodynamicsStat))
+                if (rankStat.equals(astrodynamicsStat))
                 {
-                    astrodynamicsStat = rankStatEffects.get(rankStatEffects.indexOf(astrodynamicsStat));
                     if (astrodynamicsStat.getEffect() != 15)
                     {
                         throw new Exception("Failed to add correct stat effect value.");
@@ -105,12 +101,9 @@ public class RankTest
         try
         {
             System.out.println("Current rank: " + rank.getRank());
-            for (Stat statEffect : rank.getStatEffects())
-            {
-                System.out.println("The " + statEffect.getName() + " is modified by " + statEffect.getEffect() + "%");
-                System.out.println("Description: " + statEffect.getDescription());
-            }
-
+            Stat stat = rank.getStat();
+            System.out.println("The " + stat.getName() + " is modified by " + stat.getEffect() + "%");
+            System.out.println("Description: " + stat.getDescription());
             System.out.println("Challenge: " + rank.getChallengeDescription());
             System.out.println("Challenge progress: " + rank.getChallengeProgress());
             System.out.println("Challenge goal: " + rank.getChallengeGoal());
@@ -156,11 +149,8 @@ public class RankTest
     {
         try
         {
-            LinkedList<Stat> statsEffected = rank.getStatEffects();
-            for (Stat statEffect : statsEffected)
-            {
-                System.out.println("The " + statEffect.getName() + " is modified by " + statEffect.getEffect() + "%");
-            }
+            Stat stat = rank.getStat();
+            System.out.println("The " + stat.getName() + " is modified by " + stat.getEffect() + "%");
         }
         catch (Exception e)
         {

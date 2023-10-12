@@ -1,7 +1,8 @@
 package model.test;
 
-import model.Rank;
 import model.Skill;
+
+import java.util.ArrayList;
 
 public class SkillTest
 {
@@ -16,7 +17,7 @@ public class SkillTest
     {
         try
         {
-            Skill skill = new Skill(1, "Astrodynamics", Skill.Category.Science, Skill.Tier.Novice, new Rank[]{});
+            Skill skill = new Skill(1, "Astrodynamics", Skill.Category.Science, Skill.Tier.Novice, new ArrayList<>());
             if (!skill.getName().equals("Astrodynamics"))
             {
                 throw new Exception("Failed to save skill name.");
@@ -33,7 +34,7 @@ public class SkillTest
             }
 
             // TODO: Should be equal to 4. Will update once data is populated.
-            if (skill.getRanks().length != 0)
+            if (!skill.getRanks().isEmpty())
             {
                 throw new Exception("Failed to set skill ranks.");
             }

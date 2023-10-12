@@ -2,7 +2,6 @@ package model.test;
 
 import javafx.beans.property.SimpleListProperty;
 import model.StarfieldCharacter;
-import model.Stat;
 
 public class StarfieldCharacterTest
 {
@@ -36,7 +35,7 @@ public class StarfieldCharacterTest
         {
             StarfieldCharacter character = new StarfieldCharacter("John", "I'm a space cowboy",
                                                                   new SimpleListProperty<>(),
-                                                                  new SimpleListProperty<Stat>());
+                                                                  new SimpleListProperty<>());
             if (!character.getName().equals("John"))
             {
                 throw new Exception("Failed to save characters name");
@@ -48,7 +47,7 @@ public class StarfieldCharacterTest
             }
 
             // TODO: Should add skills once the skill data is created.
-            if (character.getSkills().size() != 0)
+            if (!character.getSkills().isEmpty())
             {
                 throw new Exception("Failure creating character skills");
             }
@@ -113,7 +112,7 @@ public class StarfieldCharacterTest
     {
         try
         {
-            character.setName("Johnny");
+            character.setNameProperty("Johnny");
             if (!character.getName().equals("Johnny"))
             {
                 throw new Exception("Failed to save characters name");
@@ -130,7 +129,7 @@ public class StarfieldCharacterTest
     {
         try
         {
-            character.setDescription("I live amongst the stars.");
+            character.setDescriptionProperty("I live amongst the stars.");
             if (!character.getDescription().equals("I live amongst the stars."))
             {
                 throw new Exception("Failed to save characters description");
