@@ -32,17 +32,21 @@ public class QueryBuilder
 
     public static String viewAllSkillsQuery()
     {
-        return " SELECT * FROM skill sk JOIN `rank` rk ON rk.skillId = sk.skillId JOIN stat st ON rk.statId = st.statId ";
+        return " SELECT * FROM skill sk" + " JOIN `rank` rk ON rk.skillId = sk.skillId" + " JOIN stat st ON rk.statId = st.statId ";
     }
 
-    public static String viewAllCharacterSkillsQuery()
+    public static String viewCharacterSkillsQuery()
     {
-        return " select" + " sk.skillId as skillId," + " sk.name as skillName," + " sk.category as skillCategory," + " sk.tier as skillTier," + " cs.skillRank as `rank`" + " from character_skill cs" + " join skill sk on cs.skillId = sk.skillId" + " where cs.characterId = ? ";
+        return " SELECT sk.skillId AS skillId, sk.name AS skillName, sk.category AS skillCategory," + " sk.tier AS skillTier, cs.skillRank AS `rank` from character_skill cs" + "join skill sk on cs.skillId = sk.skillId" + " where cs.characterId = ? ";
     }
 
     public static String viewAllStatsQuery()
     {
-        // TODO: Need to figure out how to store default values that can be retrieved.
         return "SELECT * FROM stat";
+    }
+
+    public static String viewCharacterStatsQuery()
+    {
+        return " SELECT st.statId AS statId, st.name AS name, st.effect AS effect, st.description AS description" + " FROM character_stat cst JOIN stat st ON cst.statId = st.statId WHERE cst.characterId = ? ";
     }
 }
