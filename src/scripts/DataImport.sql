@@ -14,8 +14,6 @@ INSERT INTO starfield.character_stat (id, characterId, statId)
 VALUES (2, 1, 2);
 INSERT INTO starfield.character_stat (id, characterId, statId)
 VALUES (3, 1, 3);
-INSERT INTO starfield.character_stat (id, characterId, statId)
-VALUES (4, 1, 4);
 
 /*Table rank*/
 INSERT INTO starfield.`rank` (rankId, `rank`, challengeDescription, challengeGoal, statId, skillId)
