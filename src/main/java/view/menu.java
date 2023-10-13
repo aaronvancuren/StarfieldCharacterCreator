@@ -131,7 +131,7 @@ public class menu extends Application
             if (result.isPresent())
             {
                 character = result.get();
-                if (character.getCharacterId() != -1)
+                if (character.getCharacterId() != -1 && !selectedCharacter.equals(character))
                 {
                     Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Character was updated.");
                     alert.show();
