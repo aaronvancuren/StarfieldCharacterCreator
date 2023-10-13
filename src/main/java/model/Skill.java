@@ -111,7 +111,7 @@ public class Skill implements CellView
         {
             PreparedStatement ps = connection.prepareStatement(QueryBuilder.viewAllSkillsQuery());
             ResultSet result = ps.executeQuery();
-            for (int i = 0; result.next(); i++)
+            while (result.next())
             {
                 int skillId = result.getInt(1);
                 String name = result.getString(2);
@@ -154,12 +154,12 @@ public class Skill implements CellView
         return skills;
     }
 
-    public static ObservableList<Skill> viewAllSkills(int characterId)
+    public static ObservableList<Skill> viewCharacterSkills(int characterId)
     {
         ObservableList<Skill> skills = FXCollections.observableArrayList();
         try
         {
-            PreparedStatement ps = connection.prepareStatement(QueryBuilder.viewAllCharacterSkillsQuery());
+            PreparedStatement ps = connection.prepareStatement(QueryBuilder.viewCharacterSkillsQuery());
             ps.setInt(1, characterId);
             ResultSet result = ps.executeQuery();
             while (result.next())
@@ -300,4 +300,3 @@ public class Skill implements CellView
         return getName();
     }
 }
-
