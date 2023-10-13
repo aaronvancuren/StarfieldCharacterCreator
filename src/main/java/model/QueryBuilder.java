@@ -4,7 +4,6 @@ public class QueryBuilder
 {
     public static String createCharacterQuery()
     {
-        // TODO: Need to account for any linked tables
         return " INSERT INTO `character` (name, description, level, experience, experienceNeeded, availableSkillPoints) VALUES ( ?, ?, 1, 0, 1000, 0 ) ";
     }
 
@@ -20,13 +19,11 @@ public class QueryBuilder
 
     public static String updateCharacterQuery()
     {
-        // TODO: Need to account for any linked tables
         return " UPDATE `character` (characterId, name, experienceNeeded, availableSkillPoints, description, level, experience) VALUES ( ?, ?, ?, ?, ?, ? )" + " WHERE characterId = ? ";
     }
 
     public static String deleteCharacterQuery()
     {
-        // TODO: Need to account for any linked tables
         return " DELETE FROM `character` WHERE characterId = ? ";
     }
 

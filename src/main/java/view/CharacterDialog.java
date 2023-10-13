@@ -206,7 +206,7 @@ public class CharacterDialog extends Dialog<StarfieldCharacter>
             {
                 if (isCreate)
                 {
-                    StarfieldCharacter.createCharacter(character);
+                    StarfieldCharacter starfieldCharacter = StarfieldCharacter.createCharacter(character);
                 }
                 else
                 {

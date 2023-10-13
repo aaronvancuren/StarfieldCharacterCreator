@@ -253,17 +253,20 @@ public class StarfieldCharacter
         {
             PreparedStatement ps = connection.prepareStatement(QueryBuilder.createCharacterQuery());
             ps.setString(1, character.getName());
-            ps.setString(4, character.getDescription());
-            ps.execute();
-
+            ps.setString(2, character.getDescription());
+            ps.execute();            
+            
+            connection.commit();
         }
         catch (SQLException e)
         {
             System.out.println("Failed to retrieve character. Error: " + new RuntimeException(e).getMessage());
+            connection.rollback();
         }
         catch (Exception e)
         {
             System.out.println("Failed to create character. Error: " + e.getMessage());
+            connection.rollback();
         }
 
         return new StarfieldCharacter(character);
@@ -338,14 +341,18 @@ public class StarfieldCharacter
             ps.setInt(6, character.getExperience());
             ps.setInt(7, character.getCharacterId());
             ps.executeUpdate();
+
+            connection.commit();
         }
         catch (SQLException e)
         {
             System.out.println("Failed to retrieve character. Error: " + new RuntimeException(e).getMessage());
+            connection.rollback();
         }
         catch (Exception e)
         {
             System.out.println("Failed to update character. Error: " + e.getMessage());
+            connection.rollback();
         }
 
         return null;
@@ -358,16 +365,22 @@ public class StarfieldCharacter
             PreparedStatement ps = connection.prepareStatement(QueryBuilder.deleteCharacterQuery());
             ps.setInt(1, characterId);
             ps.execute();
+
+            ps = connection.prepareStatement(QueryBuilder);
+            ps.execute();
+
             connection.commit();
             return true;
         }
         catch (SQLException e)
         {
             System.out.println("Failed to retrieve character. Error: " + new RuntimeException(e).getMessage());
+            connection.rollback();
         }
         catch (Exception e)
         {
             System.out.println("Failed to delete character. Error: " + e.getMessage());
+            connection.rollback();
         }
 
         return false;
