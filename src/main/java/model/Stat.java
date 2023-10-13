@@ -87,12 +87,13 @@ public class Stat
         return stats;
     }
 
-    public static ObservableList<Stat> viewAllStats(int characterId)
+    public static ObservableList<Stat> viewCharacterStats(int characterId)
     {
         ObservableList<Stat> stats = FXCollections.observableArrayList();
         try
         {
-            PreparedStatement ps = connection.prepareStatement(QueryBuilder.viewAllStatsQuery());
+            PreparedStatement ps = connection.prepareStatement(QueryBuilder.viewCharacterStatsQuery());
+            ps.setInt(characterId, 1);
             ResultSet result = ps.executeQuery();
             while (result.next())
             {
@@ -105,11 +106,11 @@ public class Stat
         }
         catch (SQLException e)
         {
-            System.out.println("Failed to retrieve all skills. Error: " + new RuntimeException(e).getMessage());
+            System.out.println("Failed to retrieve character skills. Error: " + new RuntimeException(e).getMessage());
         }
         catch (Exception e)
         {
-            System.out.println("Failed to retrieve all skills. Error: " + e.getMessage());
+            System.out.println("Failed to retrieve character skills. Error: " + e.getMessage());
         }
 
         return stats;
