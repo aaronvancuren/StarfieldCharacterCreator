@@ -286,10 +286,10 @@ public class StarfieldCharacter
                 int experienceNeeded = result.getInt(6);
                 int availableSkillPoints = result.getInt(7);
 
-                //ObservableList<Skill> skills = Skill.viewAllSkills(characterId);
-                //ObservableList<Stat> stats = Stat.viewAllStats(characterId);
+                ObservableList<Skill> skills = Skill.viewCharacterSkills(characterId);
+                ObservableList<Stat> stats = Stat.viewCharacterStats(characterId);
 
-                characters.add(new StarfieldCharacter(characterId, name, description, null, null, level, experience,
+                characters.add(new StarfieldCharacter(characterId, name, description, skills, stats, level, experience,
                                                       experienceNeeded, availableSkillPoints));
             }
         }
