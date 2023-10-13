@@ -15,6 +15,7 @@ import model.StarfieldCharacter;
 
 import java.util.Optional;
 
+// TODO: filter skill dropdown differently for update (should include skills that can be upgraded)
 public class CharacterDialog extends Dialog<StarfieldCharacter>
 {
     private final boolean isCreate;

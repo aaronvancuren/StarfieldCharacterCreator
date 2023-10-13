@@ -254,7 +254,28 @@ public class StarfieldCharacter
             PreparedStatement ps = connection.prepareStatement(QueryBuilder.createCharacterQuery());
             ps.setString(1, character.getName());
             ps.setString(2, character.getDescription());
-            ps.execute();            
+            ps.execute();
+            
+            ps.clearParameters();
+
+            for(Skill skill : character.getSkills())
+            {
+                PreparedStatement ps = connection.prepareStatement(QueryBuilder.createCharacterSkillsQuery());
+                ps.setInt(1, character.getCharacterId());
+                ps.setInt(2, skill.getSkillId());
+                ps.setInt(3, 1) // Will always start at rank 1 when character is first created.
+                ps.execute();
+                
+                ps.clearParameters();
+            }
+
+            for(Stat stat : character.getStats())
+            {
+                PreparedStatement ps = connection.prepareStatement(QueryBuilder.createCharacterStatsQuery());
+                ps.setInt(1, character.getCharacterId());
+                ps.setInt(2, stat.getStatId());
+                ps.execute();
+            }
             
             connection.commit();
         }
@@ -333,14 +354,43 @@ public class StarfieldCharacter
         try
         {
             PreparedStatement ps = connection.prepareStatement(QueryBuilder.updateCharacterQuery());
-            ps.setString(1, character.getName());
-            ps.setInt(2, character.getExperienceNeeded());
-            ps.setInt(3, character.getAvailableSkillPoints());
-            ps.setString(4, character.getDescription());
-            ps.setInt(5, character.getLevel());
-            ps.setInt(6, character.getExperience());
-            ps.setInt(7, character.getCharacterId());
+            ps.setInt(1, character.getCharacterId());
+            ps.setString(2, character.getName());
+            ps.setString(3, character.getDescription());
+            ps.setInt(4, character.getLevel());
+            ps.setInt(5, character.getExperience());
+            ps.setInt(6, character.getExperienceNeeded());
+            ps.setInt(7, character.getAvailableSkillPoints());
             ps.executeUpdate();
+
+            ps.clearParameters();
+
+            // TODO: only if skills were updated
+            for(Skill skill : character.getSkills())
+            {
+                // TODO: need to know if we increasing rank on a skill
+                if(skill.isNextRankAvailable())
+                {
+
+                }
+
+                PreparedStatement ps = connection.prepareStatement(QueryBuilder.createCharacterSkillsQuery());
+                ps.setInt(1, character.getCharacterId());
+                ps.setInt(2, skill.getSkillId());
+                ps.setInt(3, skill.getCurrentRank())
+                ps.execute();
+                
+                ps.clearParameters();
+            }
+
+            // TODO: only if stats were changed based on skill changes
+            for(Stat stat : character.getStats())
+            {
+                PreparedStatement ps = connection.prepareStatement(QueryBuilder.createCharacterStatsQuery());
+                ps.setInt(1, character.getCharacterId());
+                ps.setInt(2, stat.getStatId());
+                ps.execute();
+            }
 
             connection.commit();
         }
@@ -366,7 +416,16 @@ public class StarfieldCharacter
             ps.setInt(1, characterId);
             ps.execute();
 
-            ps = connection.prepareStatement(QueryBuilder);
+            ps.clearParameters();
+
+            PreparedStatement ps = connection.prepareStatement(QueryBuilder.deleteCharacterSkillsQuery());
+            ps.setInt(1, characterId);
+            ps.execute();
+
+            ps.clearParameters();
+
+            ps = connection.prepareStatement(QueryBuilder.deleteCharaterStatsQuery());
+            ps.setInt(1, characterId);
             ps.execute();
 
             connection.commit();

@@ -20,7 +20,7 @@ public class QueryBuilder
 
     public static String updateCharacterQuery()
     {
-        return " UPDATE `character` (characterId, name, experienceNeeded, availableSkillPoints, description, level, experience) VALUES ( ?, ?, ?, ?, ?, ? ) WHERE characterId = ? ";
+        return " UPDATE `character` (characterId, name, description, level, experience, experienceNeeded, availableSkillPoints) VALUES ( ?, ?, ?, ?, ?, ? ) WHERE characterId = ? ";
     }
 
     public static String deleteCharacterQuery()
@@ -52,7 +52,7 @@ public class QueryBuilder
     //#endregion
 
     //#region Character Stat Queries
-    public static String createCharacterStats()
+    public static String createCharacterStatsQuery()
     {
         return "INSERT INTO character_stat (characterId, statId) VALUES (?, ?)"
     }
