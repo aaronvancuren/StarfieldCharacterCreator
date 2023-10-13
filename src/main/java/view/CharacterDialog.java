@@ -206,11 +206,11 @@ public class CharacterDialog extends Dialog<StarfieldCharacter>
             {
                 if (isCreate)
                 {
-                    // TODO: create character
+                    StarfieldCharacter.createCharacter(character);
                 }
                 else
                 {
-                    // TODO: update character
+                    StarfieldCharacter.updateCharacter(character);
                 }
 
                 return character;
@@ -245,5 +245,3 @@ public class CharacterDialog extends Dialog<StarfieldCharacter>
         return !isCreate || character.getAvailableSkillPoints() <= 0;
     }
 }
-
-// TODO: Need method to create default stat values.
