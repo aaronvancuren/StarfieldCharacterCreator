@@ -247,7 +247,7 @@ public class StarfieldCharacter
         addExperience(experienceExcess); // Captures potential multiple level ups given the experience obtained.
     }
 
-    public static StarfieldCharacter createCharacter(StarfieldCharacter character)
+    public static StarfieldCharacter createCharacter(StarfieldCharacter character) throws SQLException
     {
         try
         {
@@ -260,10 +260,10 @@ public class StarfieldCharacter
 
             for(Skill skill : character.getSkills())
             {
-                PreparedStatement ps = connection.prepareStatement(QueryBuilder.createCharacterSkillsQuery());
+                ps = connection.prepareStatement(QueryBuilder.createCharacterSkillsQuery());
                 ps.setInt(1, character.getCharacterId());
                 ps.setInt(2, skill.getSkillId());
-                ps.setInt(3, 1) // Will always start at rank 1 when character is first created.
+                ps.setInt(3, 1); // Will always start at rank 1 when character is first created.
                 ps.execute();
                 
                 ps.clearParameters();
@@ -271,7 +271,7 @@ public class StarfieldCharacter
 
             for(Stat stat : character.getStats())
             {
-                PreparedStatement ps = connection.prepareStatement(QueryBuilder.createCharacterStatsQuery());
+                ps = connection.prepareStatement(QueryBuilder.createCharacterStatsQuery());
                 ps.setInt(1, character.getCharacterId());
                 ps.setInt(2, stat.getStatId());
                 ps.execute();
@@ -349,7 +349,7 @@ public class StarfieldCharacter
         return null;
     }
 
-    public static StarfieldCharacter updateCharacter(StarfieldCharacter character)
+    public static StarfieldCharacter updateCharacter(StarfieldCharacter character) throws SQLException
     {
         try
         {
@@ -369,15 +369,15 @@ public class StarfieldCharacter
             for(Skill skill : character.getSkills())
             {
                 // TODO: need to know if we increasing rank on a skill
-                if(skill.isNextRankAvailable())
+                if (skill.getRank().isNextRankAvailable())
                 {
 
                 }
 
-                PreparedStatement ps = connection.prepareStatement(QueryBuilder.createCharacterSkillsQuery());
+                ps = connection.prepareStatement(QueryBuilder.createCharacterSkillsQuery());
                 ps.setInt(1, character.getCharacterId());
                 ps.setInt(2, skill.getSkillId());
-                ps.setInt(3, skill.getCurrentRank())
+                ps.setInt(3, skill.getCurrentRank());
                 ps.execute();
                 
                 ps.clearParameters();
@@ -386,7 +386,7 @@ public class StarfieldCharacter
             // TODO: only if stats were changed based on skill changes
             for(Stat stat : character.getStats())
             {
-                PreparedStatement ps = connection.prepareStatement(QueryBuilder.createCharacterStatsQuery());
+                ps = connection.prepareStatement(QueryBuilder.createCharacterStatsQuery());
                 ps.setInt(1, character.getCharacterId());
                 ps.setInt(2, stat.getStatId());
                 ps.execute();
@@ -408,7 +408,7 @@ public class StarfieldCharacter
         return null;
     }
 
-    public static boolean deleteCharacter(int characterId)
+    public static boolean deleteCharacter(int characterId) throws SQLException
     {
         try
         {
@@ -418,13 +418,13 @@ public class StarfieldCharacter
 
             ps.clearParameters();
 
-            PreparedStatement ps = connection.prepareStatement(QueryBuilder.deleteCharacterSkillsQuery());
+            ps = connection.prepareStatement(QueryBuilder.deleteCharacterSkillsQuery());
             ps.setInt(1, characterId);
             ps.execute();
 
             ps.clearParameters();
 
-            ps = connection.prepareStatement(QueryBuilder.deleteCharaterStatsQuery());
+            ps = connection.prepareStatement(QueryBuilder.deleteCharacterStatsQuery());
             ps.setInt(1, characterId);
             ps.execute();
 

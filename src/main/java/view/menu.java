@@ -14,14 +14,13 @@ import model.Skill;
 import model.StarfieldCharacter;
 import model.Stat;
 
+import java.sql.SQLException;
 import java.util.Optional;
 
 public class menu extends Application
 {
     private StarfieldCharacter character;
     private TableView<StarfieldCharacter> tvCharacters = new TableView<>();
-    private TableView<Skill> tvCharacterSkills = new TableView<>();
-    private TableView<Stat> tvCharacterStats = new TableView<>();
 
     /**
      * Launches the display for the application
@@ -49,13 +48,13 @@ public class menu extends Application
         Label lblCharacters = new Label("Characters", tvCharacters);
         lblCharacters.setContentDisplay(ContentDisplay.BOTTOM);
 
-        tvCharacterSkills = Skill.getTableView();
+        TableView<Skill> tvCharacterSkills = Skill.getTableView();
         tvCharacterSkills.setMinWidth(500);
         tvCharacterSkills.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         Label lblCharacterSkills = new Label("Skills", tvCharacterSkills);
         lblCharacterSkills.setContentDisplay(ContentDisplay.BOTTOM);
 
-        tvCharacterStats = Stat.getTableView();
+        TableView<Stat> tvCharacterStats = Stat.getTableView();
         tvCharacterStats.setMinWidth(500);
         Label lblCharacterStats = new Label("Stats", tvCharacterStats);
         lblCharacterStats.setLabelFor(tvCharacterStats);
@@ -176,6 +175,17 @@ public class menu extends Application
             return;
         }
 
-        StarfieldCharacter.deleteCharacter(selectedCharacter.getCharacterId());
+        try
+        {
+            StarfieldCharacter.deleteCharacter(selectedCharacter.getCharacterId());
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+        }
     }
 }
