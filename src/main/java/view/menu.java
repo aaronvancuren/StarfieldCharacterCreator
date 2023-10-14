@@ -14,12 +14,8 @@ import model.Skill;
 import model.StarfieldCharacter;
 import model.Stat;
 
-import java.io.IOException;
 import java.util.Optional;
 
-// TODO: Add documentation
-// TODO: Update test files
-// TODO: Finish populating database
 public class menu extends Application
 {
     private StarfieldCharacter character;
@@ -27,8 +23,12 @@ public class menu extends Application
     private TableView<Skill> tvCharacterSkills = new TableView<>();
     private TableView<Stat> tvCharacterStats = new TableView<>();
 
+    /**
+     * Launches the display for the application
+     * @param stage setup component for display
+     */
     @Override
-    public void start(Stage stage) throws IOException
+    public void start(Stage stage)
     {
         stage.setTitle("Starfield Character Creator");
         stage.getIcons().add(new Image("file:src/main/images/starfield.png"));
@@ -37,6 +37,10 @@ public class menu extends Application
         stage.show();
     }
 
+    /**
+     * Builds the display for the main page of the application
+     * @return VBox contains the buttons component and a GridPane with TableViews of character related data
+     */
     private VBox getContent()
     {
         tvCharacters = StarfieldCharacter.getTableView();
@@ -73,6 +77,10 @@ public class menu extends Application
         return root;
     }
 
+    /**
+     * Builds the component that contains the buttons for interacting with characters
+     * @return HBox containing buttons
+     */
     private HBox getCrudButtons()
     {
         Button btnCreateCharacter = new Button("Create Character");
@@ -92,12 +100,16 @@ public class menu extends Application
         return crudButtons;
     }
 
+    /**
+     * Launches a dialog prompt for creating a character
+     */
     private void createCharacter()
     {
         try
         {
             Dialog<StarfieldCharacter> dialog = new CharacterDialog();
             Optional<StarfieldCharacter> result = dialog.showAndWait();
+            /* Ensures a character was created and alerts the user */
             if (result.isPresent())
             {
                 character = result.get();
@@ -114,11 +126,15 @@ public class menu extends Application
         }
     }
 
+    /**
+     * Launches a dialog prompt for updating a character
+     */
     private void updateCharacter()
     {
         try
         {
             StarfieldCharacter selectedCharacter = tvCharacters.getSelectionModel().getSelectedItem();
+            /* Ensures a character is selected before opening dialog */
             if (selectedCharacter == null)
             {
                 Alert alert = new Alert(Alert.AlertType.ERROR, "Must select a character.");
@@ -128,9 +144,11 @@ public class menu extends Application
 
             Dialog<StarfieldCharacter> dialog = new CharacterDialog(selectedCharacter);
             Optional<StarfieldCharacter> result = dialog.showAndWait();
+            /* Ensures a character was updated and alerts the user */
             if (result.isPresent())
             {
                 character = result.get();
+                /* Only shows message if character was changed and updated */
                 if (character.getCharacterId() != -1 && !selectedCharacter.equals(character))
                 {
                     Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Character was updated.");
@@ -144,9 +162,13 @@ public class menu extends Application
         }
     }
 
+    /**
+     * Deletes the selected character and any related data
+     */
     private void deleteCharacter()
     {
         StarfieldCharacter selectedCharacter = tvCharacters.getSelectionModel().getSelectedItem();
+        /* Ensures a character is selected before attempting to delete */
         if (selectedCharacter == null)
         {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Must select a character.");
