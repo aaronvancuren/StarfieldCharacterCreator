@@ -16,8 +16,34 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class Skill implements CellView
+/**
+ * Character Skill
+ */
+public final class Skill implements CellView
 {
+    /**
+     * Skill Category
+     */
+    public enum Category
+    {
+        Physical,
+        Social,
+        Combat,
+        Science,
+        Tech
+    }
+
+    /**
+     * Skill Tier
+     */
+    public enum Tier
+    {
+        Novice,
+        Advanced,
+        Expert,
+        Master
+    }
+
     private static final Connection connection = MariaProvider.getConnection();
     private int skillId = -1;
     private String name = "";
@@ -154,6 +180,13 @@ public class Skill implements CellView
         return skills;
     }
 
+    /**
+     * Retrieves an observable list of character skills
+     *
+     * @param characterId Character id used to filter skills
+     *
+     * @return Character skills
+     */
     public static ObservableList<Skill> viewCharacterSkills(int characterId)
     {
         ObservableList<Skill> skills = FXCollections.observableArrayList();
@@ -184,23 +217,10 @@ public class Skill implements CellView
         return skills;
     }
 
-    public enum Category
-    {
-        Physical,
-        Social,
-        Combat,
-        Science,
-        Tech
-    }
-
-    public enum Tier
-    {
-        Novice,
-        Advanced,
-        Expert,
-        Master
-    }
-
+    /**
+     * Builds the TableView for displaying skills
+     * @return TableView of skills
+     */
     public static TableView<Skill> getTableView()
     {
         TableView<Skill> tableView = new TableView<>();
@@ -217,6 +237,10 @@ public class Skill implements CellView
         return tableView;
     }
 
+    /**
+     * Builds the TableView for displaying skills, skill ranks, and the rank stats
+     * @return TableView of skills
+     */
     public static TableView<Skill> getTableViewWithRankAndStat()
     {
         TableView<Skill> tableView = getTableView();
@@ -294,6 +318,10 @@ public class Skill implements CellView
         return tableView;
     }
 
+    /**
+     * Determines how the cells display in a drop-down for skills
+     * @return CellView for drop-down
+     */
     @Override
     public String cellView()
     {

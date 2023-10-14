@@ -11,6 +11,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Character Stat
+ */
 public class Stat
 {
     private static final Connection connection = MariaProvider.getConnection();
@@ -59,6 +62,11 @@ public class Stat
         return description;
     }
 
+    /**
+     * Retrieves an observable list of all stats
+     *
+     * @return All stats
+     */
     public static ObservableList<Stat> viewAllStats()
     {
         ObservableList<Stat> stats = FXCollections.observableArrayList();
@@ -87,6 +95,11 @@ public class Stat
         return stats;
     }
 
+    /**
+     * Retrieves an observable list of character stats
+     * @param characterId Character id used for filtering stats
+     * @return Character stats
+     */
     public static ObservableList<Stat> viewCharacterStats(int characterId)
     {
         ObservableList<Stat> stats = FXCollections.observableArrayList();
@@ -116,6 +129,10 @@ public class Stat
         return stats;
     }
 
+    /**
+     * Builds the TableView for displaying stats
+     * @return TableView of stats
+     */
     public static TableView<Stat> getTableView()
     {
         TableView<Stat> tableView = new TableView<>();

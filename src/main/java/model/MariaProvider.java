@@ -6,6 +6,11 @@ import java.sql.SQLException;
 
 public class MariaProvider
 {
+    /**
+     * Creates the default MariaDB connection
+     *
+     * @return MariaDB Connection
+     */
     public static Connection getConnection()
     {
         return getConnection(
@@ -13,11 +18,24 @@ public class MariaProvider
                                        ""));
     }
 
+    /**
+     * Creates a connection based on the parameters
+     * @param jdbcDrive  Database Drive
+     * @param databaseUrl Database Url
+     * @param username Database Username
+     * @param password Database Password
+     * @return The specified database connection
+     */
     public static Connection getConnection(String jdbcDrive, String databaseUrl, String username, String password)
     {
         return getConnection(new DatabaseConnection(jdbcDrive, databaseUrl, username, password));
     }
 
+    /**
+     * Creates a connection based on the parameter
+     * @param databaseConnection Database connection data
+     * @return The specified database connection
+     */
     public static Connection getConnection(DatabaseConnection databaseConnection)
     {
         try

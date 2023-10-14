@@ -14,7 +14,10 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
-public class StarfieldCharacter
+/**
+ * Starfield character data
+ */
+public final class StarfieldCharacter
 {
     private static final Connection connection = MariaProvider.getConnection();
     private IntegerProperty characterId = new SimpleIntegerProperty(-1);
@@ -112,14 +115,16 @@ public class StarfieldCharacter
 
     public ObservableList<Skill> getSkills()
     {
-        ObservableList<Skill> test = skillsProperty.getValue();
-        if (test == null)
-        {
-            return new SimpleListProperty<>();
-        }
         return skillsProperty.getValue();
     }
 
+    /**
+     * Retrieves a skill from character skills
+     *
+     * @param skill Skill to retrieve
+     *
+     * @return Character skill
+     */
     public Skill getSkill(Skill skill)
     {
         try
@@ -139,6 +144,11 @@ public class StarfieldCharacter
         }
     }
 
+    /**
+     * Will either add a new skill or increase the rank of an existing skill
+     * @param skill Skill to add
+     * @throws SkillPointException Character must have available skill points
+     */
     public void addSkill(Skill skill) throws Exception
     {
         if (availableSkillPointsProperty.get() > 0)
@@ -161,6 +171,10 @@ public class StarfieldCharacter
         }
     }
 
+    /**
+     * Removes a skill from character skills
+     * @param skill Skill to remove
+     */
     public void removeSkill(Skill skill)
     {
         getSkills().remove(skill);
@@ -197,6 +211,10 @@ public class StarfieldCharacter
         return experienceProperty.get();
     }
 
+    /**
+     * Will increase the current experience amount
+     * @param experienceEarned Amount by which to increase experience
+     */
     public void addExperience(int experienceEarned)
     {
         experienceProperty.set(experienceProperty.get() + experienceEarned);
@@ -237,6 +255,10 @@ public class StarfieldCharacter
         return availableSkillPointsProperty.get();
     }
 
+    /**
+     * Handles increasing the character level and available skill points then adjusts the experience and
+     * experience needed for the next level
+     */
     private void levelUp()
     {
         levelProperty.set(getLevel() + 1);
@@ -247,6 +269,12 @@ public class StarfieldCharacter
         addExperience(experienceExcess); // Captures potential multiple level ups given the experience obtained.
     }
 
+    /**
+     * Creates a new character
+     * @param character Character to create
+     * @return The newly created character
+     * @throws SQLException Failed to create character
+     */
     public static StarfieldCharacter createCharacter(StarfieldCharacter character) throws SQLException
     {
         try
@@ -293,6 +321,10 @@ public class StarfieldCharacter
         return new StarfieldCharacter(character);
     }
 
+    /**
+     * Retrieves all characters
+     * @return List of characters
+     */
     public static LinkedList<StarfieldCharacter> viewAllCharacters()
     {
         LinkedList<StarfieldCharacter> characters = new LinkedList<>();
@@ -329,6 +361,11 @@ public class StarfieldCharacter
         return characters;
     }
 
+    /**
+     * Retrieves a character
+     * @param characterId Character id for filtering
+     * @return Character
+     */
     public static StarfieldCharacter viewCharacter(int characterId)
     {
         try
@@ -349,6 +386,12 @@ public class StarfieldCharacter
         return null;
     }
 
+    /**
+     * Updates an existing character
+     * @param character Character to update
+     * @return Updated Character
+     * @throws SQLException Failed to update character
+     */
     public static StarfieldCharacter updateCharacter(StarfieldCharacter character) throws SQLException
     {
         try
@@ -408,6 +451,12 @@ public class StarfieldCharacter
         return null;
     }
 
+    /**
+     * Deletes a character
+     * @param characterId Character id use for filtering
+     * @return True if character was deleted
+     * @throws SQLException Failed to delete character
+     */
     public static boolean deleteCharacter(int characterId) throws SQLException
     {
         try
@@ -445,6 +494,10 @@ public class StarfieldCharacter
         return false;
     }
 
+    /**
+     * Creates a TableView for displaying character data
+     * @return TableView of characters
+     */
     public static TableView<StarfieldCharacter> getTableView()
     {
         TableView<StarfieldCharacter> tableView = new TableView<>();
