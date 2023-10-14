@@ -1,6 +1,9 @@
 package view;
 
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -23,6 +26,8 @@ public class menu extends Application
     private TableView<StarfieldCharacter> tvCharacters = new TableView<>();
     private TableView<Skill> tvCharacterSkills = new TableView<>();
     private TableView<Stat> tvCharacterStats = new TableView<>();
+    private ObservableList<Skill> skills;
+    private ObservableList<Stat> stats;
 
     /**
      * Launches the display for the application
@@ -44,19 +49,40 @@ public class menu extends Application
      */
     private VBox getContent()
     {
+        skills = Skill.viewAllSkills();
+        stats = Stat.viewAllStats();
+
         tvCharacters = StarfieldCharacter.getTableView();
         tvCharacters.setMinWidth(500);
         tvCharacters.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         Label lblCharacters = new Label("Characters", tvCharacters);
         lblCharacters.setContentDisplay(ContentDisplay.BOTTOM);
+        tvCharacters.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<StarfieldCharacter>()
+        {
+            @Override
+            public void changed(ObservableValue<? extends StarfieldCharacter> observableValue,
+                                StarfieldCharacter oldCharacter, StarfieldCharacter newCharacter)
+            {
+                if (newCharacter != null)
+                {
+                    tvCharacterSkills.getItems().clear();
+                    tvCharacterSkills.getItems().addAll(newCharacter.getSkills());
+                    tvCharacterSkills.refresh();
 
-        tvCharacterSkills = Skill.getTableView();
+                    tvCharacterStats.getItems().clear();
+                    tvCharacterStats.getItems().addAll(newCharacter.getStats());
+                    tvCharacterStats.refresh();
+                }
+            }
+        });
+
+        tvCharacterSkills = Skill.getTableView(skills);
         tvCharacterSkills.setMinWidth(500);
         tvCharacterSkills.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         Label lblCharacterSkills = new Label("Skills", tvCharacterSkills);
         lblCharacterSkills.setContentDisplay(ContentDisplay.BOTTOM);
 
-        tvCharacterStats = Stat.getTableView();
+        tvCharacterStats = Stat.getTableView(stats);
         tvCharacterStats.setMinWidth(500);
         Label lblCharacterStats = new Label("Stats", tvCharacterStats);
         lblCharacterStats.setLabelFor(tvCharacterStats);

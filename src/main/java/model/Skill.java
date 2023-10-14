@@ -223,6 +223,16 @@ public final class Skill implements CellView
      */
     public static TableView<Skill> getTableView()
     {
+        return getTableView(Skill.viewAllSkills());
+    }
+
+    /**
+     * Builds the TableView for displaying skills
+     *
+     * @return TableView of skills
+     */
+    public static TableView<Skill> getTableView(ObservableList<Skill> skills)
+    {
         TableView<Skill> tableView = new TableView<>();
         TableColumn<Skill, String> name = new TableColumn<>("Name");
         name.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -233,7 +243,7 @@ public final class Skill implements CellView
         tableView.getColumns().add(name);
         tableView.getColumns().add(category);
         tableView.getColumns().add(tier);
-        tableView.getItems().addAll(Skill.viewAllSkills());
+        tableView.getItems().addAll(skills);
         return tableView;
     }
 

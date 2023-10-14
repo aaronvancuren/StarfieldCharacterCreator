@@ -135,6 +135,16 @@ public class Stat
      */
     public static TableView<Stat> getTableView()
     {
+        return getTableView(Stat.viewAllStats());
+    }
+
+    /**
+     * Builds the TableView for displaying stats
+     *
+     * @return TableView of stats
+     */
+    public static TableView<Stat> getTableView(ObservableList<Stat> stats)
+    {
         TableView<Stat> tableView = new TableView<>();
         TableColumn<Stat, String> name = new TableColumn<>("Name");
         name.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -145,7 +155,7 @@ public class Stat
         tableView.getColumns().add(name);
         tableView.getColumns().add(effect);
         tableView.getColumns().add(description);
-        tableView.getItems().addAll(Stat.viewAllStats());
+        tableView.getItems().addAll(stats);
         return tableView;
     }
 }
