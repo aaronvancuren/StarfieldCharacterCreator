@@ -1,9 +1,5 @@
 package model;
 
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
-
 import java.sql.Connection;
 
 public class Rank
@@ -95,21 +91,5 @@ public class Rank
     public boolean isNextRankAvailable()
     {
         return nextRankAvailable;
-    }
-
-    public TableView<Rank> getTableView()
-    {
-        TableView<Rank> tableView = new TableView<>();
-        TableColumn<Rank, String> rank = new TableColumn<>("Rank");
-        rank.setCellValueFactory(new PropertyValueFactory<>("rank"));
-        TableColumn<Rank, String> challengeDescription = new TableColumn<>("Challenge Description");
-        challengeDescription.setCellValueFactory(new PropertyValueFactory<>("challengeDescription"));
-        TableColumn<Rank, Boolean> nextRankAvailable = new TableColumn<>("Next Rank Available");
-        nextRankAvailable.setCellValueFactory(new PropertyValueFactory<>("nextRankAvailable"));
-        tableView.getColumns().add(rank);
-        tableView.getColumns().add(challengeDescription);
-        tableView.getColumns().add(nextRankAvailable);
-        tableView.getItems().addAll(this);
-        return tableView;
     }
 }

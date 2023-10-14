@@ -67,7 +67,7 @@ public class QueryBuilder
      */
     public static String viewCharacterSkillsQuery()
     {
-        return " SELECT sk.skillId AS skillId, sk.name AS skillName, sk.category AS skillCategory," + " sk.tier AS skillTier, cs.skillRank AS `rank` from character_skill cs" + "join skill sk on cs.skillId = sk.skillId" + " where cs.characterId = ? ";
+        return " SELECT sk.skillId AS skillId, sk.name AS skillName, sk.category AS skillCategory, sk.tier AS " + " skillTier, cs.skillRank AS `rank` FROM character_skill cs JOIN skill sk ON cs.skillId = sk.skillId " + " WHERE cs.characterId = ? ";
     }
 
     /**
@@ -115,7 +115,12 @@ public class QueryBuilder
      */
     public static String deleteCharacterStatsQuery()
     {
-        return " DELETE FROM character_stat cs JOIN stat st ON cs.statId = st.statId WHERE characterId = ? ";
+        return " DELETE FROM character_stat WHERE characterId = ? ";
+    }
+
+    public static String deleteCharacterStatByIdQuery()
+    {
+        return " DELETE FROM stat WHERE statId = ? ";
     }
     //#endregion
 

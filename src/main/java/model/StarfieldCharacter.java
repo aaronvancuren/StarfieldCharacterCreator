@@ -453,28 +453,35 @@ public final class StarfieldCharacter
 
     /**
      * Deletes a character
-     * @param characterId Character id use for filtering
+     * @param character Character used for filtering
      * @return True if character was deleted
      * @throws SQLException Failed to delete character
      */
-    public static boolean deleteCharacter(int characterId) throws SQLException
+    public static boolean deleteCharacter(StarfieldCharacter character) throws SQLException
     {
         try
         {
             PreparedStatement ps = connection.prepareStatement(QueryBuilder.deleteCharacterQuery());
-            ps.setInt(1, characterId);
+            ps.setInt(1, character.getCharacterId());
             ps.execute();
 
             ps.clearParameters();
 
             ps = connection.prepareStatement(QueryBuilder.deleteCharacterSkillsQuery());
-            ps.setInt(1, characterId);
+            ps.setInt(1, character.getCharacterId());
             ps.execute();
 
             ps.clearParameters();
 
+            for (Stat stat : character.getStats())
+            {
+                ps = connection.prepareStatement(QueryBuilder.deleteCharacterStatByIdQuery());
+                ps.setInt(1, stat.getStatId());
+                ps.execute();
+            }
+
             ps = connection.prepareStatement(QueryBuilder.deleteCharacterStatsQuery());
-            ps.setInt(1, characterId);
+            ps.setInt(1, character.getCharacterId());
             ps.execute();
 
             connection.commit();
@@ -513,6 +520,7 @@ public final class StarfieldCharacter
         TableColumn<StarfieldCharacter, Integer> experience = new TableColumn<>("Experience");
         experience.setCellValueFactory(new PropertyValueFactory<>("experience"));
 
+        // TODO: BUG: Will not display experience needed for an unknown reason.
         TableColumn<StarfieldCharacter, Integer> experienceNeeded = new TableColumn<>("Experience Required");
         experience.setCellValueFactory(new PropertyValueFactory<>("experienceNeeded"));
 

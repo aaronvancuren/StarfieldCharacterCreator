@@ -3,11 +3,12 @@ package model.test;
 import model.Rank;
 import model.Stat;
 
+import java.util.Objects;
+
 public class RankTest
 {
     public static void main(String[] args)
     {
-        // TODO: Will test with data from Excel file.
         Rank rank = CreateRank();
         ShowRankDetails(rank);
 
@@ -36,55 +37,63 @@ public class RankTest
 
     public static Rank CreateRank()
     {
+        Rank rank = null;
         try
         {
-            Stat astrodynamicsStat = new Stat("Astrodynamics", 15, "Increases grav jump range.");
-
-            Rank rank = new Rank(1, 1, new Stat("Astrodynamics", 15, "Increases grav jump range."),
+            Stat stat = new Stat("Astrodynamics", 15, "Increases grav jump range.");
+            rank = new Rank(1, 1, new Stat("Astrodynamics", 15, "Increases grav jump range."),
                                  "Make 5 grav jumps.", 5);
+            if (rank.getRankId() != 1)
+            {
+                throw new Exception("Failed to create a rank with an id.");
+            }
+
             if (rank.getRank() != 1)
             {
-                throw new Exception("Failed to save rank.");
+                throw new Exception("Failed to create a rank.");
             }
 
             Stat rankStat = rank.getStat();
-            if (rankStat != null)
+            if (rankStat == null)
             {
-                if (rankStat.equals(astrodynamicsStat))
-                {
-                    if (astrodynamicsStat.getEffect() != 15)
-                    {
-                        throw new Exception("Failed to add correct stat effect value.");
-                    }
-                }
-                else
-                {
-                    throw new Exception("Failed to add stat effect Astrodynamics.");
-                }
-            }
-            else
-            {
-                throw new Exception("Failed to add stat effects.");
+                throw new Exception("Failed to add stat.");
             }
 
-            if (!astrodynamicsStat.getDescription().equals("Increases grav jump range."))
+            var t = rankStat.getName();
+            var s = stat.getName();
+            if (!Objects.equals(rankStat.getName(), stat.getName()))
             {
-                throw new Exception("Failed to save stat effect description for Astrodynamics.");
+                throw new Exception("Failed to add stat with correct name.");
+            }
+
+            if (stat.getEffect() != 15)
+            {
+                throw new Exception("Failed to add stat effect with correct value.");
+            }
+
+            if (!stat.getDescription().equals("Increases grav jump range."))
+            {
+                throw new Exception("Failed to add stat with correct description.");
             }
 
             if (!rank.getChallengeDescription().equals("Make 5 grav jumps."))
             {
-                throw new Exception("Failed to save challenge description.");
+                throw new Exception("Failed to add stat with correct challenge description.");
             }
 
             if (rank.getChallengeProgress() != 0)
             {
-                throw new Exception("Failed to set challenge progress.");
+                throw new Exception("Failed to add stat with correct challenge progress.");
             }
 
             if (rank.getChallengeGoal() != 5)
             {
-                throw new Exception("Failed to save challenge goal.");
+                throw new Exception("Failed to add stat with correct challenge goal.");
+            }
+
+            if (rank.isNextRankAvailable())
+            {
+                throw new Exception("Failed to add stat with correct default value for isNextRankAvailable.");
             }
         }
         catch (Exception e)
@@ -93,7 +102,7 @@ public class RankTest
             System.exit(e.hashCode());
         }
 
-        return null;
+        return rank;
     }
 
     public static void ShowRankDetails(Rank rank)

@@ -176,6 +176,8 @@ public class CharacterDialog extends Dialog<StarfieldCharacter>
             {
                 character.addSkill(cbSkills.getValue());
                 recentlyAddedSkills.add(cbSkills.getValue());
+                this.skills.remove(cbSkills.getValue());
+                this.skills.sort(new SkillComparator());
             }
         }
         catch (Exception e)
@@ -185,12 +187,6 @@ public class CharacterDialog extends Dialog<StarfieldCharacter>
         }
         finally
         {
-            if (character.getSkill(cbSkills.getValue()) != null)
-            {
-                this.skills.remove(cbSkills.getValue());
-                this.skills.sort(new SkillComparator());
-            }
-
             lblAvailableSkillPoints.setText("Skill points left: " + character.getAvailableSkillPoints());
         }
     }
@@ -207,12 +203,15 @@ public class CharacterDialog extends Dialog<StarfieldCharacter>
             recentlyAddedSkills.remove(skill);
             this.skills.add(skill);
             this.skills.sort(new SkillComparator());
-            lblAvailableSkillPoints.setText("Skill points left: " + character.getAvailableSkillPoints());
         }
         catch (Exception e)
         {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Failed to remove skill. Error: " + e.getMessage());
             alert.show();
+        }
+        finally
+        {
+            lblAvailableSkillPoints.setText("Skill points left: " + character.getAvailableSkillPoints());
         }
     }
 
@@ -232,17 +231,17 @@ public class CharacterDialog extends Dialog<StarfieldCharacter>
     private void setResultConverter()
     {
         Callback<ButtonType, StarfieldCharacter> starfieldCharacterCallback = buttonType -> {
-            if (buttonType != ButtonType.APPLY)
+            if (buttonType.getButtonData().name().equals(ButtonType.APPLY.getButtonData().name()))
             {
                 try
                 {
                     if (isCreate)
                     {
-                        StarfieldCharacter starfieldCharacter = StarfieldCharacter.createCharacter(character);
+                        character = StarfieldCharacter.createCharacter(character);
                     }
                     else
                     {
-                        StarfieldCharacter.updateCharacter(character);
+                        character = StarfieldCharacter.updateCharacter(character);
                     }
                 }
                 catch (SQLException e)
@@ -269,7 +268,7 @@ public class CharacterDialog extends Dialog<StarfieldCharacter>
      */
     public boolean isValidForm()
     {
-        if (tfCharacterName.getText().isEmpty())
+        if (tfCharacterName.getText().isBlank())
         {
             Alert alert = new Alert(Alert.AlertType.WARNING, "Character name is required.");
             alert.show();
@@ -284,9 +283,19 @@ public class CharacterDialog extends Dialog<StarfieldCharacter>
             alert.getButtonTypes().add(new ButtonType("Yes", ButtonBar.ButtonData.YES));
             alert.getButtonTypes().add(new ButtonType("No", ButtonBar.ButtonData.NO));
             Optional<ButtonType> result = alert.showAndWait();
-            return result.isEmpty() || (result.get().getButtonData() != ButtonBar.ButtonData.NO);
+            if (result.isPresent() && result.get().getButtonData() == ButtonBar.ButtonData.NO)
+            {
+                return false;
+            }
         }
 
-        return !isCreate || character.getAvailableSkillPoints() <= 0;
+        if (isCreate && character.getAvailableSkillPoints() > 0)
+        {
+            Alert alert = new Alert(Alert.AlertType.WARNING, "Character must have 3 starting skills.");
+            alert.show();
+            return false;
+        }
+
+        return true;
     }
 }

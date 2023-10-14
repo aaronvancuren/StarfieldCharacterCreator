@@ -21,6 +21,8 @@ public class menu extends Application
 {
     private StarfieldCharacter character;
     private TableView<StarfieldCharacter> tvCharacters = new TableView<>();
+    private TableView<Skill> tvCharacterSkills = new TableView<>();
+    private TableView<Stat> tvCharacterStats = new TableView<>();
 
     /**
      * Launches the display for the application
@@ -48,13 +50,13 @@ public class menu extends Application
         Label lblCharacters = new Label("Characters", tvCharacters);
         lblCharacters.setContentDisplay(ContentDisplay.BOTTOM);
 
-        TableView<Skill> tvCharacterSkills = Skill.getTableView();
+        tvCharacterSkills = Skill.getTableView();
         tvCharacterSkills.setMinWidth(500);
         tvCharacterSkills.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         Label lblCharacterSkills = new Label("Skills", tvCharacterSkills);
         lblCharacterSkills.setContentDisplay(ContentDisplay.BOTTOM);
 
-        TableView<Stat> tvCharacterStats = Stat.getTableView();
+        tvCharacterStats = Stat.getTableView();
         tvCharacterStats.setMinWidth(500);
         Label lblCharacterStats = new Label("Stats", tvCharacterStats);
         lblCharacterStats.setLabelFor(tvCharacterStats);
@@ -177,7 +179,8 @@ public class menu extends Application
 
         try
         {
-            StarfieldCharacter.deleteCharacter(selectedCharacter.getCharacterId());
+            StarfieldCharacter.deleteCharacter(selectedCharacter);
+            tvCharacters.getItems().remove(selectedCharacter);
         }
         catch (SQLException e)
         {
