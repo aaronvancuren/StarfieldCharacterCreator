@@ -40,7 +40,7 @@ public class MariaProvider
             }
 
             Connection connection = DriverManager.getConnection(sb.toString());
-            connection.setAutocommit(false);
+            connection.setAutoCommit(false);
             System.out.println("Database connected!");
             return connection;
         }
