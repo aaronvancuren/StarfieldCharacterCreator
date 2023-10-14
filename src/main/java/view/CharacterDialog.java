@@ -13,9 +13,9 @@ import model.Skill;
 import model.SkillComparator;
 import model.StarfieldCharacter;
 
+import java.sql.SQLException;
 import java.util.Optional;
 
-// TODO: filter skill dropdown differently for update (should include skills that can be upgraded)
 public class CharacterDialog extends Dialog<StarfieldCharacter>
 {
     private final boolean isCreate;
@@ -29,6 +29,9 @@ public class CharacterDialog extends Dialog<StarfieldCharacter>
     private Label lblAvailableSkillPoints = new Label();
     private TableView<Skill> tvCharacterSkills = new TableView<>();
 
+    /**
+     * Displays the dialog for creating a character
+     */
     public CharacterDialog()
     {
         super();
@@ -43,6 +46,11 @@ public class CharacterDialog extends Dialog<StarfieldCharacter>
         setResultConverter();
     }
 
+    /**
+     * Displays the dialog for updating character data
+     *
+     * @param character Used to populate the form
+     */
     public CharacterDialog(StarfieldCharacter character)
     {
         super();
@@ -62,6 +70,9 @@ public class CharacterDialog extends Dialog<StarfieldCharacter>
         setResultConverter();
     }
 
+    /**
+     * Builds the component that contains the buttons for interacting with the dialog
+     */
     public void setDialogButtons(String applyButtonName)
     {
         ButtonType btApplyDialog = new ButtonType(applyButtonName, ButtonBar.ButtonData.APPLY);
@@ -76,6 +87,11 @@ public class CharacterDialog extends Dialog<StarfieldCharacter>
         });
     }
 
+
+    /**
+     * Builds the display for the dialog
+     * @return Contains a VBox form of the required/editable data fields of a character
+     */
     private VBox getContent()
     {
         tfCharacterName.setMaxWidth(255);
@@ -149,6 +165,9 @@ public class CharacterDialog extends Dialog<StarfieldCharacter>
         return root;
     }
 
+    /**
+     * Adds a skill to a character
+     */
     private void addSkill()
     {
         try
@@ -176,6 +195,10 @@ public class CharacterDialog extends Dialog<StarfieldCharacter>
         }
     }
 
+    /**
+     * Removes a skill from a character
+     * @param skill skill to be removed
+     */
     private void removeSkill(Skill skill)
     {
         try
@@ -193,6 +216,9 @@ public class CharacterDialog extends Dialog<StarfieldCharacter>
         }
     }
 
+    /**
+     * Sets two-way binding for character properties
+     */
     private void setPropertyBindings()
     {
         tfCharacterName.textProperty().bindBidirectional(character.getNameProperty());
@@ -200,18 +226,32 @@ public class CharacterDialog extends Dialog<StarfieldCharacter>
         tvCharacterSkills.itemsProperty().bindBidirectional(character.getSkillsProperty());
     }
 
+    /**
+     * Converts the dialog result into the desired return type
+     */
     private void setResultConverter()
     {
         Callback<ButtonType, StarfieldCharacter> starfieldCharacterCallback = buttonType -> {
             if (buttonType != ButtonType.APPLY)
             {
-                if (isCreate)
+                try
                 {
-                    StarfieldCharacter starfieldCharacter = StarfieldCharacter.createCharacter(character);
+                    if (isCreate)
+                    {
+                        StarfieldCharacter starfieldCharacter = StarfieldCharacter.createCharacter(character);
+                    }
+                    else
+                    {
+                        StarfieldCharacter.updateCharacter(character);
+                    }
                 }
-                else
+                catch (SQLException e)
                 {
-                    StarfieldCharacter.updateCharacter(character);
+                    throw new RuntimeException(e);
+                }
+                catch (Exception e)
+                {
+                    System.out.println(e.getMessage());
                 }
 
                 return character;
@@ -223,6 +263,10 @@ public class CharacterDialog extends Dialog<StarfieldCharacter>
         setResultConverter(starfieldCharacterCallback);
     }
 
+    /**
+     * Checks if the form inputs are valid for creating/updating a character
+     * @return true if form parameters are valid inputs
+     */
     public boolean isValidForm()
     {
         if (tfCharacterName.getText().isEmpty())
